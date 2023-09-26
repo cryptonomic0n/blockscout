@@ -26,8 +26,8 @@ services:
         NETWORK: Cryptonomic0n
         SUBNETWORK: Ethereum
         ETHEREUM_JSONRPC_VARIANT: 'geth'
-        ETHEREUM_JSONRPC_HTTP_URL: https://bs-tst:zaq12wsx@node.cryptonomicon.space:14438
-        ETHEREUM_JSONRPC_TRACE_URL: https://bs-tst:zaq12wsx@node.cryptonomicon.space:14438
+        ETHEREUM_JSONRPC_HTTP_URL: https://bs-tst:msdhDbr347145234@node.cryptonomicon.space:14438
+        ETHEREUM_JSONRPC_TRACE_URL: https://bs-tst:msdhDbr347145234@node.cryptonomicon.space:14438
         DATABASE_URL: postgresql://postgres:@host.docker.internal:7432/blockscout?ssl=false
         # DISABLE_INDEXER: 'true'
         MICROSERVICE_SC_VERIFIER_ENABLED: 'true'
