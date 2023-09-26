@@ -16,32 +16,25 @@ services:
       - db
       - redis_db
     extends:
-      file: ./services/docker-compose-backend.yml
+      file: ./services/docker-compose-backend-arm64.yml
+      # file: ./services/docker-compose-backend-amd64.yml
       service: backend
-    build:
-      context: ..
-      dockerfile: ./docker/Dockerfile
-      args:
-        CACHE_EXCHANGE_RATES_PERIOD: ""
-        API_V1_READ_METHODS_DISABLED: "false"
-        DISABLE_WEBAPP: "false"
-        API_V1_WRITE_METHODS_DISABLED: "false"
-        CACHE_TOTAL_GAS_USAGE_COUNTER_ENABLED: ""
-        CACHE_ADDRESS_WITH_BALANCES_UPDATE_INTERVAL: ""
-        ADMIN_PANEL_ENABLED: ""
-        RELEASE_VERSION: 5.2.3
     links:
       - db:database
     environment:
+        NETWORK: Cryptonomic0n
+        SUBNETWORK: Ethereum
         ETHEREUM_JSONRPC_VARIANT: 'geth'
         ETHEREUM_JSONRPC_HTTP_URL: https://bs-tst:zaq12wsx@node.cryptonomicon.space:14438
         ETHEREUM_JSONRPC_TRACE_URL: https://bs-tst:zaq12wsx@node.cryptonomicon.space:14438
         DATABASE_URL: postgresql://postgres:@host.docker.internal:7432/blockscout?ssl=false
         # DISABLE_INDEXER: 'true'
         MICROSERVICE_SC_VERIFIER_ENABLED: 'true'
-        MICROSERVICE_SC_VERIFIER_URL: http://host.docker.internal:8150
+        MICROSERVICE_SC_VERIFIER_URL: http://smart-contract-verifier:8050/
+        MICROSERVICE_SC_VERIFIER_TYPE: sc_verifier
     ports:
-      - 4000:4000
+      # backend and old front
+      - 4001:4000
 
   visualizer:
     extends:
@@ -64,6 +57,18 @@ services:
     extends:
       file: ./services/docker-compose-frontend.yml
       service: frontend
+    environment:
+        NEXT_PUBLIC_API_HOST: cryptonomicon.space
+        NEXT_PUBLIC_API_PORT: 14438
+        NEXT_PUBLIC_API_PROTOCOL: https
+        NEXT_PUBLIC_STATS_API_HOST: https://stats.cryptonomicon.space:14438
+        NEXT_PUBLIC_APP_PROTOCOL: https
+        NEXT_PUBLIC_APP_HOST: cryptonomicon.space
+        NEXT_PUBLIC_APP_PORT: 14438
+        NEXT_PUBLIC_NETWORK_NAME: Cryptonomic0n
+        NEXT_PUBLIC_HOMEPAGE_CHARTS: ['daily_txs','coin_price','market_cap']
+        NEXT_PUBLIC_VISUALIZE_API_HOST: https://visualizer.cryptonomicon.space:14438
+        NEXT_PUBLIC_CONTRACT_INFO_API_HOST: https://contracts-info.services.blockscout.com
 
   stats-db:
     depends_on:
