@@ -4,7 +4,7 @@ services:
   backend:
     build:
       context: ../..
-      dockerfile: ./docker/Dockerfile
+      dockerfile: ./docker/Dockerfile_arm64
       args:
         CACHE_EXCHANGE_RATES_PERIOD: ""
         API_V1_READ_METHODS_DISABLED: "false"
@@ -12,7 +12,7 @@ services:
         API_V1_WRITE_METHODS_DISABLED: "false"
         CACHE_TOTAL_GAS_USAGE_COUNTER_ENABLED: ""
         CACHE_ADDRESS_WITH_BALANCES_UPDATE_INTERVAL: ""
-        ADMIN_PANEL_ENABLED: ""
+        ADMIN_PANEL_ENABLED: "true"
         RELEASE_VERSION: 5.2.3
     # image: blockscout/blockscout:${DOCKER_TAG:-latest}
     # image: ghcr.io/blockscout/blockscout:${DOCKER_TAG:-latest}
