@@ -17,7 +17,8 @@ services:
       - redis_db
     extends:
       # file: ./services/docker-compose-backend.yml
-      file: ./services/docker-compose-backend-arm64.yml
+      file: ./services/docker-compose-backend-arm64-no-build.yml
+      # file: ./services/docker-compose-backend-arm64.yml
       # file: ./services/docker-compose-backend-amd64.yml
       service: backend
     links:
