@@ -1,10 +1,15 @@
-version: '3.8'
+version: '3.9'
 
 services:
   redis_db:
     extends:
       file: ./services/docker-compose-redis.yml
       service: redis_db
+
+  db-init:
+    extends:
+      file: ./services/docker-compose-db-arm64.yml
+      service: db-init
 
   db:
     extends:
@@ -26,8 +31,8 @@ services:
         POOL_SIZE: 20
         POOL_SIZE_API: 40
         DISABLE_INDEXER: 'true'
-        # FIRST_BLOCK: 13603000
-        # TRACE_FIRST_BLOCK: 13603000
+        # FIRST_BLOCK: 13600000
+        # TRACE_FIRST_BLOCK: 13600000
     ports:
       # backend and old front
       - 4000:4000
@@ -66,6 +71,11 @@ services:
         NEXT_PUBLIC_VISUALIZE_API_HOST: http://127.0.0.1:8081
     #     NEXT_PUBLIC_CONTRACT_INFO_API_HOST: https://contracts-info.services.blockscout.com
     #     MASTER_URL: 127.0.0.1
+
+  stats-db-init:
+    extends:
+      file: ./services/docker-compose-stats.yml
+      service: stats-db-init
 
   stats-db:
     depends_on:

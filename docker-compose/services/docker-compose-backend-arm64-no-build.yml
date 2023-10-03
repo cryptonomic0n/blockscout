@@ -1,7 +1,12 @@
-version: '3.8'
+version: '3.9'
 
 services:
   backend:
+    image: blockscout/blockscout:${DOCKER_TAG:-latest}
+    pull_policy: always
+    restart: always
+    stop_grace_period: 5m
+    container_name: 'backend'
     # build:
     #   context: ../..
     #   dockerfile: ./docker/Dockerfile_arm64
@@ -14,22 +19,15 @@ services:
     #     CACHE_ADDRESS_WITH_BALANCES_UPDATE_INTERVAL: ""
     #     ADMIN_PANEL_ENABLED: "true"
     #     RELEASE_VERSION: 5.2.3
-    image: blockscout/blockscout:${DOCKER_TAG:-latest}
-    pull_policy: always
-    # platform: linux/amd64
-    restart: always
-    stop_grace_period: 5m
-    container_name: 'backend'
     environment:
         NETWORK: Cryptonomic0n
         SUBNETWORK: Ethereum
         ETHEREUM_JSONRPC_VARIANT: 'geth'
         ETHEREUM_JSONRPC_HTTP_URL: https://bs-tst:msdhDbr347145234@node.cryptonomicon.space:14438
         ETHEREUM_JSONRPC_TRACE_URL: https://bs-tst:msdhDbr347145234@node.cryptonomicon.space:14438
-        DATABASE_URL: postgresql://postgres:@host.docker.internal:7432/blockscout?ssl=false
-        DISABLE_INDEXER: 'false'
-        # FIRST_BLOCK: 13600000
-        # TRACE_FIRST_BLOCK: 13600000
+        # DISABLE_INDEXER: 'true'
+        FIRST_BLOCK: 13600000
+        TRACE_FIRST_BLOCK: 13600000
         MICROSERVICE_SC_VERIFIER_ENABLED: 'true'
         MICROSERVICE_SC_VERIFIER_URL: http://smart-contract-verifier:8050/
         MICROSERVICE_SC_VERIFIER_TYPE: sc_verifier
