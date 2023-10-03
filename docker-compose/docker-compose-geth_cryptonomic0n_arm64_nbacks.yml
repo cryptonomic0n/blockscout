@@ -1,0 +1,137 @@
+version: '3.8'
+
+services:
+  redis_db:
+    extends:
+      file: ./services/docker-compose-redis.yml
+      service: redis_db
+
+  db:
+    extends:
+      file: ./services/docker-compose-db-arm64.yml
+      service: db
+
+  backend:
+    depends_on:
+      - db
+      - redis_db
+    extends:
+      # file: ./services/docker-compose-backend.yml
+      file: ./services/docker-compose-backend-arm64.yml
+      # file: ./services/docker-compose-backend-amd64.yml
+      service: backend
+    links:
+      - db:database
+    environment:
+        POOL_SIZE: 20
+        POOL_SIZE_API: 40
+        DISABLE_INDEXER: 'true'
+        # FIRST_BLOCK: 13603000
+        # TRACE_FIRST_BLOCK: 13603000
+    ports:
+      # backend and old front
+      - 4000:4000
+
+  visualizer:
+    extends:
+      file: ./services/docker-compose-visualizer.yml
+      service: visualizer
+
+  sig-provider:
+    extends:
+      file: ./services/docker-compose-sig-provider.yml
+      service: sig-provider
+
+  smart-contract-verifier:
+    extends:
+      file: ./services/docker-compose-smart-contract-verifier.yml
+      service: smart-contract-verifier
+
+  frontend:
+    depends_on:
+      - backend
+    extends:
+      file: ./services/docker-compose-frontend.yml
+      service: frontend
+    environment:
+    #     NEXT_PUBLIC_API_HOST: cryptonomicon.space
+    #     NEXT_PUBLIC_API_PORT: 14438
+    #     NEXT_PUBLIC_API_PROTOCOL: https
+        NEXT_PUBLIC_STATS_API_HOST: http://127.0.0.1:8080
+    #     NEXT_PUBLIC_APP_PROTOCOL: https
+    #     NEXT_PUBLIC_APP_HOST: cryptonomicon.space
+    #     NEXT_PUBLIC_APP_PORT: 14438
+        NEXT_PUBLIC_NETWORK_NAME: Cryptonomic0n
+        NEXT_PUBLIC_HOMEPAGE_CHARTS: "['daily_txs','coin_price','market_cap']"
+        NEXT_PUBLIC_VISUALIZE_API_HOST: http://127.0.0.1:8081
+    #     NEXT_PUBLIC_CONTRACT_INFO_API_HOST: https://contracts-info.services.blockscout.com
+    #     MASTER_URL: 127.0.0.1
+
+  stats-db:
+    depends_on:
+      - backend
+    extends:
+      file: ./services/docker-compose-stats.yml
+      service: stats-db
+
+  stats:
+    depends_on:
+      - stats-db
+    extends:
+      file: ./services/docker-compose-stats.yml
+      service: stats
+
+  proxy:
+    depends_on:
+      - backend
+      - frontend
+      - stats
+    extends:
+      file: ./services/docker-compose-nginx-arm64.yml
+      service: proxy
+
+# --- additioanal backends start
+  # backend2:
+  #   depends_on:
+  #     - db
+  #     - redis_db
+  #   extends:
+  #     # file: ./services/docker-compose-backend.yml
+  #     file: ./services/docker-compose-backend-arm64.yml
+  #     # file: ./services/docker-compose-backend-amd64.yml
+  #     service: backend
+  #   container_name: 'backend2'
+  #   links:
+  #     - db:database
+  #   environment:
+  #       POOL_SIZE: 40
+  #       POOL_SIZE_API: 20
+  #       FIRST_BLOCK: 13590000
+  #       TRACE_FIRST_BLOCK: 13590000
+  #       LAST_BLOCK: 13590050
+  #       TRACE_LAST_BLOCK: 13590050
+  #   ports:
+  #     - 4002:4000
+
+  # backend3:
+  #   depends_on:
+  #     - db
+  #     - redis_db
+  #   extends:
+  #     # file: ./services/docker-compose-backend.yml
+  #     file: ./services/docker-compose-backend-arm64.yml
+  #     # file: ./services/docker-compose-backend-amd64.yml
+  #     service: backend
+  #   container_name: 'backend3'
+  #   links:
+  #     - db:database
+  #   environment:
+  #       POOL_SIZE: 40
+  #       POOL_SIZE_API: 20
+  #       FIRST_BLOCK: 13590100
+  #       TRACE_FIRST_BLOCK: 13590100
+  #       LAST_BLOCK: 13590150
+  #       TRACE_LAST_BLOCK: 13590150
+  #   ports:
+  #     - 4003:4000
+# --- additional backs end
